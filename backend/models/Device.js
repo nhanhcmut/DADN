@@ -17,20 +17,6 @@ const DeviceSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Vui lòng nhập Adafruit key']
   },
-  feeds: {
-    temperature: {
-      type: String,
-      default: '0'
-    },
-    humidity: {
-      type: String,
-      default: '0'
-    },
-    soil: {
-      type: String,
-      default: '0'
-    }
-  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

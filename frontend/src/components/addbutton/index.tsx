@@ -7,7 +7,7 @@ const AddButton = ({onClick }: AddButtonProps) => {
   const intl = useTranslations("Components");
   return (
     <button onClick={onClick}>
-      <Container className="w-[150px] h-[150px] items-center justify-center flex flex-col ">
+      <Container className="w-[150px] h-[150px] items-center hover:scale-110 justify-center flex flex-col ">
       <IoAddOutline className=" text-[100px] " />
       <h1>
       {intl("adddevice")}

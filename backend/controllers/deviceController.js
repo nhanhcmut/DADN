@@ -63,11 +63,6 @@ exports.createDevice = async (req, res) => {
       location, 
       usernameaio,
       keyaio,
-      feeds: {
-        temperature: '0',
-        humidity: '0',
-        soil: '0'
-      },
       userId: req.user.userId
     });
 
@@ -91,12 +86,12 @@ exports.createDevice = async (req, res) => {
       description: 'Điều kiện mặc định',
       conditions: {
         temperature: {
-          min: 25,
-          max: 30
+          min: 40,
+          max: 35
         },
         humidity: {
-          min: 55,
-          max: 60
+          min: 40,
+          max: 70
         }
       }
     });

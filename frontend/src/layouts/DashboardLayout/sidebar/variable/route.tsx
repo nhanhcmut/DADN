@@ -11,12 +11,7 @@ const useRoutes = () => {
       path: "devices",
       icon: <FaFileInvoice className="h-4 w-4" />,
     },
-    {
-      name: t("sensor_data"),
-      layout: "/dashboard",
-      path: "sensor_data",
-      icon: <FaHistory className="h-4 w-4" />,
-    },
+
   ];
 };
 

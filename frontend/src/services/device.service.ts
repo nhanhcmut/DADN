@@ -22,5 +22,14 @@ export class DeviceOperation extends BaseOperation {
         
         return this.request('POST', `devices`, payload , token);
     }
+    async getDevice() {
+        const token=getTokenFromCookie();
+        if (!token) {
+            throw new Error("Token is missing. Please log in.");
+        }
+        
+        return this.request('GET', `devices`, undefined , token);
+    }
+
 
 }

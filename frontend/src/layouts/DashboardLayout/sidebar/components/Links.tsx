@@ -58,7 +58,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
   };
 
   const createLinks = (routes: any) => {
-    const employeeRoute = routes.filter((route: { path: string }) => ["sensor_data", "devices"].includes(route.path));
+    const employeeRoute = routes.filter((route: { path: string }) => [ "devices"].includes(route.path));
     const renderLinks = (routes: any, startIndex: number, headerText: string) => (
       <div>
         <p className="font-semibold mb-2 pl-5 pt-2">{headerText}</p>

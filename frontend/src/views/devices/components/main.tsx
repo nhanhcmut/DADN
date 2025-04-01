@@ -1,26 +1,22 @@
-"use client"
+"use client";
 import AddButton from "@/components/addbutton";
 import DeviceButton from "@/components/device";
 import { useTranslations } from "next-intl";
 import LoadingUI from "@/components/loading";
 import { AppDispatch, RootState } from "@/store";
 import CustomInputField from "@/components/input";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNotifications } from "@/hooks/NotificationsProvider";
 import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
 import RenderCase from "@/components/render";
 import DetailPopup from "@/components/popup";
-
+import { DeviceOperation } from "@/services/device.service";
 import CustomButton2 from "@/components/button";
-import { createDevice} from "@/store/action/deviceSlice";
+import { createDevice } from "@/store/action/deviceSlice";
 import { MdOutlineDevicesOther } from "react-icons/md";
-// Example devices data
-const exampleDevices = [
-  { id: 1, name: "Device 1", location: "Ho Chi Minh, Vietnam" },
-  { id: 2, name: "Device 2", location: "Hanoi, Vietnam" },
-  { id: 3, name: "Device 3", location: "Da Nang, Vietnam" },
-];
+import { useNavigate } from "react-router-dom";
+
 
 const DevicesMain = () => {
   const [openAdd, setOpenAdd] = useState<boolean>(false);
@@ -34,16 +30,19 @@ const DevicesMain = () => {
   const [location, setLocation] = useState<string>("");
   const [usernameaio, setUsernameaio] = useState<string>("");
   const [keyaio, setKeyaio] = useState<string>("");
+  const device = new DeviceOperation();
+  const [devices, setDevices] = useState<DeviceData[]>([]);
+  const navigate = useNavigate();
+
+
 
   const handleAddClick = () => {
     setOpenAdd(true);
   };
 
-  const handleDeviceButtonClick = (deviceName: string, location: string) => {
-    alert(`Device ${deviceName} located in ${location} clicked!`);
-  };
-
-
+  const handleDeviceClick = (deviceId: string) => {
+    navigate(`/sensor_data/${deviceId}`); 
+};
 
   const handleCreateDevice = () => {
     const payload = {
@@ -51,14 +50,16 @@ const DevicesMain = () => {
       location: location.trim(),
       usernameaio: usernameaio.trim(),
       keyaio: keyaio.trim(),
-}
-    
+    };
 
     if (!name || !location || !usernameaio || !keyaio) {
-      addNotification({ type: "error", message: intl("Email and password are required") });
+      addNotification({
+        type: "error",
+        message: intl("Email and password are required"),
+      });
       return;
     }
-    
+
     dispatch(createDevice(payload)).then((data) => {
       if (createDevice.fulfilled.match(data)) {
         addNotification({ type: "success", message: intl("Success") });
@@ -69,47 +70,71 @@ const DevicesMain = () => {
   };
 
   const handleSubmit = () => {
-      setIsError(false);
-      handleCreateDevice();
-      setOpenAdd(false)
-    }
+    setIsError(false);
+    handleCreateDevice();
+    setOpenAdd(false);
+  };
 
-    useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          handleSubmit();
-        }
-      };
-  
-      document.addEventListener("keydown", handleKeyDown);
-      return () => {
-        document.removeEventListener("keydown", handleKeyDown);
-      };
-    }, [name, location,usernameaio,keyaio]);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [name, location, usernameaio, keyaio]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await device.getDevice();
+      if (response?.data && Array.isArray(response.data)) {
+        const filteredDevices: DeviceData[] = response.data.map(
+          (device: any) => ({
+            id: device.id,
+            name: device.name,
+            location: device.location,
+          })
+        );
+        setDevices(filteredDevices);
+      } else {
+        setDevices([]); // Ensuring state is always an array
+      }
+    } catch (error) {
+      console.error("Error fetching devices:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
     <>
-    
-    <div className="flex flex-wrap gap-4">
-      {/* Add Button */}
-      <AddButton onClick={handleAddClick} />
-
-      {/* Dynamically Render DeviceButtons */}
-      {exampleDevices.map((device) => (
-        <DeviceButton
-          key={device.id} // Ensure a unique key for each device
-          deviceName={device.name}
-          location={device.location}
-          onClick={() => handleDeviceButtonClick(device.name, device.location)} // Pass dynamic data to the handler
-        />
-      ))}
-    </div>
-    <RenderCase condition={openAdd} >
+      <div className="flex flex-wrap gap-4">
+        <AddButton onClick={handleAddClick} />
+        {devices?.length > 0 &&
+          devices.map((device) => (
+            <DeviceButton
+              key={device.id}
+              deviceName={device.name}
+              location={device.location}
+              onClick={() =>
+                handleDeviceClick(device.id)
+              }
+            />
+          ))}
+      </div>
+      <RenderCase condition={openAdd}>
         <DetailPopup
-          onClose={()=>setOpenAdd(false)}
+          onClose={() => setOpenAdd(false)}
           title={intl("InfoTitle")}
-          customWidth="w-[400px]gi"
-          icon={<MdOutlineDevicesOther  className="w-full h-full" />}
+          customWidth="w-[400px]"
+          icon={<MdOutlineDevicesOther className="w-full h-full" />}
         >
           <CustomInputField
             label={
@@ -119,7 +144,7 @@ const DevicesMain = () => {
               </div>
             }
             state={isError && !name ? "error" : ""}
-            placeholder={intl("namePlaceHolder")}
+            placeholder={intl("namePlaceholder")}
             id="name"
             type="text"
             value={name}
@@ -135,7 +160,7 @@ const DevicesMain = () => {
               </div>
             }
             state={isError && !location ? "error" : ""}
-            placeholder={intl("locationPlaceHolder")}
+            placeholder={intl("locationPlaceholder")}
             id="location"
             type="text"
             value={location}
@@ -151,7 +176,7 @@ const DevicesMain = () => {
               </div>
             }
             state={isError && !usernameaio ? "error" : ""}
-            placeholder={intl("usernameaioPlaceHolder")}
+            placeholder={intl("usernameaioPlaceholder")}
             id="usernameaio"
             type="text"
             value={usernameaio}
@@ -159,32 +184,31 @@ const DevicesMain = () => {
             inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary !rounded-xl h-12 border border-gray-200 dark:border-white/10"
           />
           <CustomInputField
-          label={
-            <div className="flex gap-1 place-items-center relative  mb-1 mt-2">
-              {intl("keyaio")}
-              <p className="text-red-500">*</p>
-            </div>
-          }
-          state={isError && !keyaio ? "error" : ""}
-          placeholder={intl("keyaioPlaceHolder")}
-          id="keyaio"
-          type="text"
-          value={keyaio}
-          setValue={setKeyaio}
-          inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary !rounded-xl h-12 border border-gray-200 dark:border-white/10"
-        />
-        <div
-          className=" items-center justify-center flex pt-4 pb-2">
+            label={
+              <div className="flex gap-1 place-items-center relative  mb-1 mt-2">
+                {intl("keyaio")}
+                <p className="text-red-500">*</p>
+              </div>
+            }
+            state={isError && !keyaio ? "error" : ""}
+            placeholder={intl("keyaioPlaceholder")}
+            id="keyaio"
+            type="text"
+            value={keyaio}
+            setValue={setKeyaio}
+            inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary !rounded-xl h-12 border border-gray-200 dark:border-white/10"
+          />
+          <div className=" items-center justify-center flex pt-4 pb-2">
             <CustomButton2
-            version="1"
-            color="error"
-            onClick={handleSubmit}
-            className="linear w-[200px] rounded-md bg-[#1e8323] dark:!bg-[#1e8323] h-10 text-base font-medium text-white transition duration-200 hover:bg-red-600 
+              version="1"
+              color="error"
+              onClick={handleSubmit}
+              className="linear w-[200px] rounded-md bg-[#1e8323] dark:!bg-[#1e8323] h-10 text-base font-medium text-white transition duration-200 hover:bg-red-600 
                 active:bg-red-700 dark:text-white dark:hover:bg-red-400 dark:active:bg-red-300 flex justify-center place-items-center"
-          >
-            {loading ? <LoadingUI /> : intl("Enter")}
-          </CustomButton2></div>
-          
+            >
+              {loading ? <LoadingUI /> : intl("Enter")}
+            </CustomButton2>
+          </div>
         </DetailPopup>
       </RenderCase>
     </>
@@ -192,3 +216,6 @@ const DevicesMain = () => {
 };
 
 export default DevicesMain;
+function getTokenFromCookie() {
+  throw new Error("Function not implemented.");
+}
