@@ -1,0 +1,132 @@
+{
+  "Login": {
+    "Login": "Login",
+    "Sologan": "Smart irrigation, a greener future!",
+    "LoginSubtitle": "Enter your username and password to log in!",
+    "LoginForUser": "Login",
+    "Email": "Email",
+    "Password": "Password",
+    "PasswordPlaceholder": "Enter password...",
+    "Success": "Login successful",
+    "Fail": "Login failed, please check your account/password",
+    "MissingField": "Please fill in the username and password",
+    "YetRegister":"Don't have an account?",
+    "Register":"Register now.",
+    "Forgot":"Forgot password?"
+  },
+ "Register": {
+    "Register": "Register",
+    "RegisterSubtitle": "Enter your registration information!",
+    "Sologan": "Smart irrigation, a greener future!",
+    "Success": "Registration successful",
+    "Fail": "Registration failed",
+    "MissingField": "Please fill in all required information",
+    "RePasswordFail":"Password does not match",
+    "Username": "Username",
+    "UsernamePlaceholder": "Enter username...",
+    "Email":"Email",
+    "Password": "Password",
+    "PasswordPlaceholder": "Enter password...",
+    "RePassword": "Re-enter password",
+    "RePasswordPlaceholder": "Re-enter password...",
+    "AlreadyRegister":"Already have an account?",
+    "Login":"Login now."
+},
+"SensorData": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "withcondition": "Activation Condition",
+    "temperaturestart": "Temperature Start",
+    "temperaturestop": "Temperature Stop",
+    "humiditystart": "Humidity Start",
+    "humiditystop": "Humidity Stop",
+    "pump": "Pump",
+    "speed": "Speed"
+  },
+  
+    "Device": {
+      "InfoTitle": "Add Device",
+      "name": "Device Name",
+      "location": "Location",
+      "usernameaio": "Adafruit Username",
+      "keyaio": "Adafruit Key",
+      "namePlaceholder": "Enter device name",
+      "locationPlaceholder": "Enter location",
+      "usernameaioPlaceholder": "Enter Adafruit username",
+      "keyaioPlaceholder": "Enter Adafruit key",
+      "Enter": "Confirm"
+    },  
+  "Routes": {
+   "Management":"Management",
+   "sensor_data": "Sensor data",
+   "devices":"Devices"
+  },
+  "Notification": {
+    "DefaultTitle": "Notification",
+    "DefaultCloseButton": "Close",
+    "DefaultSubmitButton": "Confirm"
+  },
+  "InputField": {
+    "DefaultSelectPlaceHolder": "Select...",
+    "DefaultSelectNoOptions": "No suitable options",
+    "DefaultSelectSearchPlaceHolder": "Search...",
+    "DefaultTextPlaceHolder": "Enter..."
+  },
+  "Table": {
+    "DefaultSearchPlaceHolder": "Search...",
+    "DefaultPageMessage": "Please enter the page number",
+    "DefaultSizePerPage": "Display:",
+    "DefaultNoDataMessage": "No data",
+    "DefaultNoDataValue": "No information"
+  },
+  "Navbar": {
+    "Search": "AI Chatbot",
+    "Search2": "Ask AI...",
+    "Login": "Logged in as",
+    "ViewInfo": "View info",
+    "ChangePass": "Change password",
+    "Logout": "Logout",
+    "LogoutMessage": "Confirm logout?",
+    "InfoTitle": "Account info",
+    "FirstMessage": "## ⚠️ Note: **This is just a ChatBot using a third-party API.**\n\n🚫 *Cannot answer questions related to business data.*"
+  },
+  "NotFound": {
+    "Title": "404 - Error",
+    "Subtitle": "Page not found",
+    "Goback": "Go back"
+  },
+  "LoggedIn": {
+    "Message": "Please log in to continue"
+  },
+  "BillsRoute": {
+    "amount": "Amount",
+    "type": "Bill Type",
+    "note": "Reason Note",
+    "INVOICE": "Invoice",
+    "RECEIPT": "Receipt",
+    "OTHER": "Other",
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "Status": "Status",
+    "id": "ID",
+    "reason": " Reason for acceptance / rejection",
+    "submit": "Submit",
+    "action": "Approve / Reject"
+  },
+  "TableCustomButton": {
+    "Add": "Add",
+    "Delete": "Delete",
+    "Reload": "Reload"
+  },
+  "Components": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "temperatureUnit": "°C",
+    "humidityUnit": "%",
+    "on": "On",
+    "off": "Off",
+    "adddevice":"Add device"
+  }
+
+}
