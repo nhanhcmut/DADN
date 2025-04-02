@@ -16,12 +16,12 @@ const ActivationConditionSchema = new mongoose.Schema({
   },
   conditions: {
     temperature: {
-      min: Number,
-      max: Number
+      start: Number,
+      stop: Number
     },
     humidity: {
-      min: Number,
-      max: Number
+      start: Number,
+      stop: Number
     }
   }
 }, {

@@ -6,18 +6,13 @@ const HistorySchema = new mongoose.Schema({
         ref: 'Device',
         required: true
     },
-    type: {
+    humidvalue: {
         type: String,
-        enum: ['TEMPERATURE', 'HUMIDITY'],
-        required: true
+        default: '0'
     },
-    oldValue: {
+    tempvalue: {
         type: String,
-        required: true
-    },
-    newValue: {
-        type: String,
-        required: true
+        default: '0'
     },
     timestamp: {
         type: Date,

@@ -75,7 +75,7 @@ exports.createDevice = async (req, res) => {
       duration: 30,
       tempControlled: false,
       humidControlled: false,
-      manualControl: true,
+      manualControl: false,
       pumpSpeed: 0
     });
     await waterProcess.save();
@@ -86,17 +86,22 @@ exports.createDevice = async (req, res) => {
       description: 'Điều kiện mặc định',
       conditions: {
         temperature: {
-          min: 40,
-          max: 35
+          start: 40,
+          stop: 35
         },
         humidity: {
-          min: 40,
-          max: 70
+          start: 40,
+          stop: 70
         }
       }
     });
     await condition.save();
 
+    const sensorData =new SensorData({
+      deviceId: savedDevice._id
+
+    });
+    await sensorData.save();
     res.status(201).json({
       success: true,
       data: {

@@ -64,7 +64,7 @@ exports.scheduleWaterProcess = async (req, res) => {
 exports.updateProcessControls = async (req, res) => {
   try {
     const { tempControlled, humidControlled, manualControl, pumpSpeed } = req.body;
-    const process = await WaterProcess.findById(req.params.id);
+    const process = await WaterProcess.findOne({ deviceId: req.params.id });
     
     if (!process) {
       return res.status(404).json({ message: 'Không tìm thấy quy trình tưới nước' });

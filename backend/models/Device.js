@@ -25,5 +25,5 @@ const DeviceSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-
+ 
 module.exports = mongoose.model('Device', DeviceSchema);

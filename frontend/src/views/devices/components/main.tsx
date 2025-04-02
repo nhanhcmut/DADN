@@ -15,8 +15,7 @@ import { DeviceOperation } from "@/services/device.service";
 import CustomButton2 from "@/components/button";
 import { createDevice } from "@/store/action/deviceSlice";
 import { MdOutlineDevicesOther } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-
+import { useRouter } from "next/navigation";
 
 const DevicesMain = () => {
   const [openAdd, setOpenAdd] = useState<boolean>(false);
@@ -32,17 +31,10 @@ const DevicesMain = () => {
   const [keyaio, setKeyaio] = useState<string>("");
   const device = new DeviceOperation();
   const [devices, setDevices] = useState<DeviceData[]>([]);
-  const navigate = useNavigate();
-
-
-
+  const router = useRouter(); 
   const handleAddClick = () => {
     setOpenAdd(true);
   };
-
-  const handleDeviceClick = (deviceId: string) => {
-    navigate(`/sensor_data/${deviceId}`); 
-};
 
   const handleCreateDevice = () => {
     const payload = {
@@ -95,7 +87,7 @@ const DevicesMain = () => {
       if (response?.data && Array.isArray(response.data)) {
         const filteredDevices: DeviceData[] = response.data.map(
           (device: any) => ({
-            id: device.id,
+            _id: device._id,
             name: device.name,
             location: device.location,
           })
@@ -116,16 +108,14 @@ const DevicesMain = () => {
   return (
     <>
       <div className="flex flex-wrap gap-4">
-        <AddButton onClick={handleAddClick} />
+        <AddButton onClick={handleAddClick}/>
         {devices?.length > 0 &&
           devices.map((device) => (
             <DeviceButton
-              key={device.id}
+              key={device._id}
               deviceName={device.name}
               location={device.location}
-              onClick={() =>
-                handleDeviceClick(device.id)
-              }
+              onClick={() => router.push(`/devices/${device._id}`)}
             />
           ))}
       </div>

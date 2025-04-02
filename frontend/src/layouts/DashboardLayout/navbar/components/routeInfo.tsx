@@ -27,8 +27,16 @@ const RouteInfo = () => {
             const cleanPathname = getPathWithoutLocale(pathname);
             return routes.findIndex(route => route.layout && route.path && cleanPathname === route.path);
         };
-        setActiveRoute(routes[findActiveRouteIndex()].path);
+    
+        const activeIndex = findActiveRouteIndex();
+        if (activeIndex !== -1) {
+            setActiveRoute(routes[activeIndex].path);
+        } else {
+            console.warn("Không tìm thấy route phù hợp!");
+            setActiveRoute(undefined);
+        }
     }, [pathname, routes]);
+    
 
     return (
         <div className="ml-[6px] w-full md:w-fit whitespace-nowrap">

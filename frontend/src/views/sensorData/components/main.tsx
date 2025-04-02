@@ -1,16 +1,17 @@
 "use client";
-
 import HistoryChart from "@/components/chart";
 import CircleProgress from "@/components/circleprogess";
 import Container from "@/components/container";
 import Slider from "@/components/slider";
 import Toggle from "@/components/toggle";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import CustomButton2 from "@/components/button";
 import LoadingUI from "@/components/loading";
 import { useNotifications } from "@/hooks/NotificationsProvider";
-
+import { useRouter } from "next/router";
+import { useEffect, useState, useCallback} from "react";
+import { useParams } from "next/navigation";
+import { SensorDataOperation } from "@/services/sensorData.service";
 const sampleData = [
   { time: "10:00", temperature: 22, humidity: 60 },
   { time: "11:00", temperature: 24, humidity: 62 },
@@ -20,7 +21,11 @@ const sampleData = [
   { time: "15:00", temperature: 60, humidity: 90 },
 ];
 
+
+
 const SensorDataMain = () => {
+ 
+
   const transformedData = sampleData.map(({ time, temperature, humidity }) => ({
     time,
     temperature,
@@ -31,6 +36,7 @@ const SensorDataMain = () => {
   const [isPumpOn, setPumpOn] = useState<boolean>(false);
   const intl = useTranslations("SensorData");
   const [speed, setSpeed] = useState<number>(75);
+  
   const [temperatureStart, setTemperatureStart] = useState<number>(40);
   const [temperatureStop, setTemperatureStop] = useState<number>(35);
   const [temperatureSpeed, setTemperatureSpeed] = useState<number>(75);
@@ -40,15 +46,44 @@ const SensorDataMain = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { addNotification } = useNotifications();
-
+  const sensorData = new SensorDataOperation();
+;
+  const [temperature, setTemperature] = useState<number>(0);
+  const [humidity, setHumidity] = useState<number>(0);
+  const params = useParams();
+  const id = params.id as string;
+  
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await sensorData.getSensorData(id);
+  
+      if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+        console.log("Dữ liệu API:", response.data); // Kiểm tra dữ liệu
+  
+        const firstEntry = response.data[0]; // Lấy phần tử đầu tiên trong mảng
+        
+        setTemperature(Number(firstEntry.tempvalue));
+        setHumidity(Number(firstEntry.humidvalue));
+      } else {
+        console.warn("Không tìm thấy dữ liệu cảm biến.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu:", error);
+    }
+  }, [id]);
+  
+  
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
 
   return (
     <div className="w-full max-h-screen gap-4 flex flex-col pb-4 ">
       <div className="flex w-full h-fit flex-row gap-4">
         <Container className="w-fit h-fit gap-4 p-4 flex flex-col relative">
-          <CircleProgress value={20} type="temperature" />
-          <CircleProgress value={20} type="humidity" />
+          <CircleProgress value={temperature} type="temperature" />
+          <CircleProgress value={humidity} type="humidity" />
         </Container>
         <Container className="w-full p-4 flex items-center justify-center">
           <HistoryChart data={transformedData} />
