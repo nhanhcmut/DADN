@@ -40,7 +40,7 @@ exports.scheduleWaterProcess = async (req, res) => {
     });
 
     const newProcess = await waterProcess.save();
-    
+
     // Update MQTT feeds based on controls
     if (tempControlled) {
       await mqttService.publishToDeviceFeed(deviceId, 'tempswitch', '1');
@@ -78,23 +78,39 @@ exports.updateProcessControls = async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy quy trình tưới nước' });
     }
 
-    // Cập nhật các tham số vào quy trình
-    process.tempControlled = tempControlled;
-    process.humidControlled = humidControlled;
-    process.manualControl = manualControl;
-    process.pumpSpeed = pumpSpeed;
+    // Lưu trạng thái trước đó
+    const previousProcess = await WaterProcess.findOne({ deviceId: req.params.id });
 
-    // Lưu quy trình đã cập nhật
+    if (!previousProcess) {
+      console.error("Không tìm thấy dữ liệu quy trình trước đó!");
+      return;
+    }
+
+    // Kiểm tra và cập nhật nếu giá trị thay đổi
+    if (previousProcess.tempControlled !== tempControlled) {
+      process.tempControlled = tempControlled;
+      await mqttService.publishToDeviceFeed(req.params.id, 'tempswitch', tempControlled);
+    }
+
+    if (previousProcess.humidControlled !== humidControlled) {
+      process.humidControlled = humidControlled;
+      await mqttService.publishToDeviceFeed(req.params.id, 'humidswitch', humidControlled);
+    }
+
+    if (previousProcess.manualControl !== manualControl) {
+      process.manualControl = manualControl;
+      await mqttService.publishToDeviceFeed(req.params.id, 'pump', manualControl);
+    }
+
+    if (previousProcess.pumpSpeed !== pumpSpeed && pumpSpeed !== undefined && pumpSpeed !== null
+    ) {
+      process.pumpSpeed = pumpSpeed;
+      await mqttService.publishToDeviceFeed(req.params.id, 'speed', pumpSpeed);
+    }
+
+    // Lưu quy trình đã cập nhật nếu có thay đổi
     await process.save();
 
-    // // Gửi các thông tin lên MQTT
-    // await mqttService.publishToDeviceFeed(req.params.id, 'tempswitch', tempControlled.toString());
-    // await mqttService.publishToDeviceFeed(req.params.id, 'humidswitch', humidControlled.toString());
-    // await mqttService.publishToDeviceFeed(req.params.id, 'pump', manualControl.toString());
-
-    // if (pumpSpeed !== undefined) {
-    //   await mqttService.publishToDeviceFeed(req.params.id, 'speed', pumpSpeed.toString());
-    // }
 
     // Trả về dữ liệu quy trình đã được cập nhật
     res.json(process);
@@ -114,7 +130,7 @@ exports.updateWaterProcessStatus = async (req, res) => {
       { status },
       { new: true }
     ).populate('deviceId', 'name location');
-    
+
     if (!process) {
       return res.status(404).json({ message: 'Không tìm thấy quy trình tưới nước' });
     }

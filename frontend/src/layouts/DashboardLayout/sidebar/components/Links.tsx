@@ -58,7 +58,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
   };
 
   const createLinks = (routes: any) => {
-    const employeeRoute = routes.filter((route: { path: string }) => [ "devices"].includes(route.path));
+    const DevicesRoute = routes.filter((route: { path: string }) => [ "devices"].includes(route.path));
     const renderLinks = (routes: any, startIndex: number, headerText: string) => (
       <div>
         <p className="font-semibold mb-2 pl-5 pt-2">{headerText}</p>
@@ -89,7 +89,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
 
     return (
       <ul ref={sidebarRef} className="relative">
-        {renderLinks(employeeRoute, 0, intl("Management"))}
+        {renderLinks(DevicesRoute, 0, intl("Management"))}
         {indicatorStyle && (
           <motion.div
             className="absolute right-0 w-1 rounded-lg bg-[#1e8323] dark:bg-[#1e8323]"

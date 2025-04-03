@@ -107,7 +107,7 @@ const Avatar = () => {
       <RenderCase condition={openPass}>
         <DetailPopup
           onClose={handleCloseInfo}
-          title={intl("InfoTitle")}
+          title={intl("ChangePass")}
           customWidth="w-fit"
           icon={<FaKey className="w-full h-full" />}
         >

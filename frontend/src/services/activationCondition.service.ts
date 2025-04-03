@@ -1,7 +1,7 @@
 import { getTokenFromCookie } from "@/utils/token";
 import { BaseOperation } from "./base.service";
 
-export interface activationConditionDto {
+export interface ActivationConditionDto {
     conditions :{
     temperature: {
         start: number;
@@ -19,7 +19,7 @@ export class ActivationConditionOperation extends BaseOperation {
         super('http://localhost:5000/api/activation-conditions');
     }
 
-    async updateActivationCondition(payload: activationConditionDto ,id:string) {
+    async updateActivationCondition(payload: ActivationConditionDto ,id:string) {
         const token=getTokenFromCookie();
         if (!token) {
             throw new Error("Token is missing. Please log in.");

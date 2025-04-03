@@ -10,29 +10,39 @@
     "Success": "Login successful",
     "Fail": "Login failed, please check your account/password",
     "MissingField": "Please fill in the username and password",
-    "YetRegister":"Don't have an account?",
-    "Register":"Register now.",
-    "Forgot":"Forgot password?"
+    "YetRegister": "Don't have an account?",
+    "Register": "Register now.",
+    "Forgot": "Forgot password?"
   },
- "Register": {
+  "Register": {
     "Register": "Register",
     "RegisterSubtitle": "Enter your registration information!",
     "Sologan": "Smart irrigation, a greener future!",
     "Success": "Registration successful",
     "Fail": "Registration failed",
     "MissingField": "Please fill in all required information",
-    "RePasswordFail":"Password does not match",
+    "RePasswordFail": "Password does not match",
     "Username": "Username",
     "UsernamePlaceholder": "Enter username...",
-    "Email":"Email",
+    "Email": "Email",
     "Password": "Password",
     "PasswordPlaceholder": "Enter password...",
     "RePassword": "Re-enter password",
     "RePasswordPlaceholder": "Re-enter password...",
-    "AlreadyRegister":"Already have an account?",
-    "Login":"Login now."
-},
-"SensorData": {
+    "AlreadyRegister": "Already have an account?",
+    "Login": "Login now."
+  },
+  "ForgotPassword": {
+    "ForgotPassword": "Forgot password?",
+    "ForgotPasswordSubtitle": "Please enter your email",
+    "Email": "Email",
+    "Enter": "Confirm",
+    "AlreadyRegister": "Already have an account?",
+    "Login": "Login now.",
+    "Success": "The password has been sent to your email.",
+    "Fail": "Incorrect email."
+  },
+  "SensorData": {
     "temperature": "Temperature",
     "humidity": "Humidity",
     "withcondition": "Activation Condition",
@@ -43,23 +53,22 @@
     "pump": "Pump",
     "speed": "Speed"
   },
-  
-    "Device": {
-      "InfoTitle": "Add Device",
-      "name": "Device Name",
-      "location": "Location",
-      "usernameaio": "Adafruit Username",
-      "keyaio": "Adafruit Key",
-      "namePlaceholder": "Enter device name",
-      "locationPlaceholder": "Enter location",
-      "usernameaioPlaceholder": "Enter Adafruit username",
-      "keyaioPlaceholder": "Enter Adafruit key",
-      "Enter": "Confirm"
-    },  
+  "Device": {
+    "InfoTitle": "Add Device",
+    "name": "Device Name",
+    "location": "Location",
+    "usernameaio": "Adafruit Username",
+    "keyaio": "Adafruit Key",
+    "namePlaceholder": "Enter device name",
+    "locationPlaceholder": "Enter location",
+    "usernameaioPlaceholder": "Enter Adafruit username",
+    "keyaioPlaceholder": "Enter Adafruit key",
+    "Enter": "Confirm"
+  },
   "Routes": {
-   "Management":"Management",
-   "sensor_data": "Sensor data",
-   "devices":"Devices"
+    "Management": "Management",
+    "sensor_data": "Sensor data",
+    "devices": "Devices"
   },
   "Notification": {
     "DefaultTitle": "Notification",
@@ -88,7 +97,19 @@
     "Logout": "Logout",
     "LogoutMessage": "Confirm logout?",
     "InfoTitle": "Account info",
-    "FirstMessage": "## ⚠️ Note: **This is just a ChatBot using a third-party API.**\n\n🚫 *Cannot answer questions related to business data.*"
+    "FirstMessage": "## ⚠️ Note: **This is just a ChatBot using a third-party API.**\n\n🚫 *Cannot answer questions related to business data.*",
+    "Password": "Password",
+    "NewPassword": "New Password",
+    "Re-NewPassword": "New Password",
+    "PasswordPlaceHolder": "Enter current password",
+    "NewPasswordPlaceHolder": "Enter new password",
+    "Re-NewPasswordPlaceHolder": "Re-enter new password",
+    "MissingField": "Please fill in all required fields",
+    "missemail": "Email not found",
+    "Success": "Password changed successfully",
+    "fail": "Password change failed",
+    "Enter": "Confirm",
+    "checkpasswordfail": "New password does not match"
   },
   "NotFound": {
     "Title": "404 - Error",
@@ -126,7 +147,6 @@
     "humidityUnit": "%",
     "on": "On",
     "off": "Off",
-    "adddevice":"Add device"
+    "adddevice": "Add device"
   }
-
 }

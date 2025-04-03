@@ -11,7 +11,6 @@ const useRoutes = () => {
       path: "devices",
       icon: <FaFileInvoice className="h-4 w-4" />,
     },
-
   ];
 };
 

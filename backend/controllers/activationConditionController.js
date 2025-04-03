@@ -23,7 +23,7 @@ exports.getDeviceConditions = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy điều kiện kích hoạt cho thiết bị này." });
     }
 
-    res.json(conditions.conditions); 
+    res.json({ conditions: conditions.conditions });
   } catch (err) {
     console.error("Lỗi API:", err);
     res.status(500).json({ message: "Lỗi máy chủ, vui lòng kiểm tra log." });
@@ -80,37 +80,50 @@ exports.updateCondition = async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy điều kiện kích hoạt' });
     }
 
-    // Kiểm tra điều kiện nếu đã cung cấp
-    if (conditions) {
-      if (!conditions.temperature || !conditions.humidity) {
-        return res.status(400).json({ 
+   // Kiểm tra điều kiện nếu đã cung cấp
+if (conditions) {
+  if (!conditions.temperature || !conditions.humidity) {
+      return res.status(400).json({ 
           message: 'Điều kiện phải bao gồm cả nhiệt độ và độ ẩm' 
-        });
-      }
+      });
+  }
 
-      // Kiểm tra các giá trị start và stop có hợp lệ không
-      const { temperature, humidity } = conditions;
-      if (
-        isNaN(temperature.start) || isNaN(temperature.stop) ||
-        isNaN(humidity.start) || isNaN(humidity.stop)
-      ) {
-        return res.status(400).json({
+  // Kiểm tra các giá trị start và stop có hợp lệ không
+  const { temperature, humidity } = conditions;
+  if (
+      isNaN(temperature.start) || isNaN(temperature.stop) ||
+      isNaN(humidity.start) || isNaN(humidity.stop)
+  ) {
+      return res.status(400).json({
           message: 'Giá trị start và stop của nhiệt độ và độ ẩm phải là số hợp lệ'
-        });
-      }
+      });
+  }
 
-      // Cập nhật các điều kiện
-      condition.conditions = conditions;
-      
-    //   // Gửi thông tin lên Adafruit thông qua MQTT
-    //   await mqttService.publishToDeviceFeed(deviceId, 'tempstart', temperature.start.toString());
-    //   await mqttService.publishToDeviceFeed(deviceId, 'tempstop', temperature.stop.toString());
-    //   await mqttService.publishToDeviceFeed(deviceId, 'humidstart', humidity.start.toString());
-    //   await mqttService.publishToDeviceFeed(deviceId, 'humidstop', humidity.stop.toString());
-   }
+  // Lấy dữ liệu điều kiện trước đó để kiểm tra sự thay đổi
+  const previousCondition = await ActivationCondition.findOne({ deviceId });
 
-    // Lưu điều kiện đã cập nhật vào cơ sở dữ liệu
-    await condition.save();
+  // Chỉ cập nhật nếu có thay đổi giá trị
+  if (!previousCondition || previousCondition.conditions.temperature.start !== temperature.start) {
+      await mqttService.publishToDeviceFeed(deviceId, 'tempstart', temperature.start.toString());
+  }
+
+  if (!previousCondition || previousCondition.conditions.temperature.stop !== temperature.stop) {
+      await mqttService.publishToDeviceFeed(deviceId, 'tempstop', temperature.stop.toString());
+  }
+
+  if (!previousCondition || previousCondition.conditions.humidity.start !== humidity.start) {
+      await mqttService.publishToDeviceFeed(deviceId, 'humidstart', humidity.start.toString());
+  }
+
+  if (!previousCondition || previousCondition.conditions.humidity.stop !== humidity.stop) {
+      await mqttService.publishToDeviceFeed(deviceId, 'humidstop', humidity.stop.toString());
+  }
+
+  // Cập nhật dữ liệu nếu có thay đổi
+  condition.conditions = conditions;
+  await condition.save();
+}
+
 
     // Trả về điều kiện đã cập nhật
     res.json(condition);
