@@ -55,6 +55,7 @@ const DevicesMain = () => {
     dispatch(createDevice(payload)).then((data) => {
       if (createDevice.fulfilled.match(data)) {
         addNotification({ type: "success", message: intl("Success") });
+        fetchData();
       } else if (createDevice.rejected.match(data)) {
         addNotification({ type: "error", message: intl("Fail") });
       }

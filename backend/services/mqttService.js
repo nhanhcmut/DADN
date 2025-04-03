@@ -1,16 +1,16 @@
 const mqtt = require('mqtt');
 const Device = require('../models/Device');
 const SensorData = require('../models/SensorData');
-const History = require('../models/History');
 const WaterProcess = require('../models/WaterProcess');
 const ActivationCondition = require('../models/ActivationCondition');
 
 class MqttService {
     constructor() {
-        this.clients = {}; 
-        this.connectAllDevices(); 
+        this.clients = {}; // Chứa các kết nối MQTT cho từng thiết bị
+        this.connectAllDevices(); // Kết nối tất cả thiết bị khi khởi tạo dịch vụ
     }
 
+    // Hàm lấy tất cả thiết bị từ MongoDB
     async getAllDevices() {
         try {
             const devices = await Device.find({});
@@ -22,6 +22,7 @@ class MqttService {
         }
     }
 
+    // Hàm kết nối tất cả thiết bị lên MQTT
     async connectAllDevices() {
         try {
             const devices = await this.getAllDevices();
@@ -37,6 +38,7 @@ class MqttService {
         }
     }
 
+    // Hàm kết nối một thiết bị đến broker MQTT
     connect(device) {
         const brokerUrl = 'mqtt://io.adafruit.com';
 
@@ -45,12 +47,14 @@ class MqttService {
             return;
         }
 
+        // Nếu thiết bị đã kết nối rồi, ngắt kết nối cũ
         if (this.clients[device._id]) {
             this.clients[device._id].end(true);
         }
 
         console.log(`Kết nối MQTT cho thiết bị: ${device.name}`);
 
+        // Kết nối với Adafruit
         const client = mqtt.connect(brokerUrl, {
             username: device.usernameaio,
             password: device.keyaio,
@@ -58,9 +62,12 @@ class MqttService {
             connectTimeout: 30000
         });
 
-        client.on('connect', () => {
-            console.log(`Thiết bị ${device.name} đã kết nối MQTT`);
+        client.on('connect', async () => {
+            console.log(`📡 Thiết bị ${device.name} đã kết nối MQTT`);
             this.subscribeToFeeds(client, device);
+
+            // Gửi toàn bộ dữ liệu lên Adafruit sau khi kết nối thành công
+            await this.sendDeviceDataToAdafruit(client, device);
         });
 
         client.on('error', (error) => {
@@ -74,6 +81,42 @@ class MqttService {
         this.clients[device._id] = client;
     }
 
+    // Hàm gửi dữ liệu thiết bị lên Adafruit
+    async sendDeviceDataToAdafruit(client, device) {
+        try {
+            const sensorData = await SensorData.findOne({ deviceId: device._id });
+            const waterProcess = await WaterProcess.findOne({ deviceId: device._id });
+            const activationCondition = await ActivationCondition.findOne({ deviceId: device._id });
+
+            if (sensorData || waterProcess || activationCondition) {
+                console.log(`🚀 Đang gửi toàn bộ dữ liệu lên Adafruit...`);
+
+                const feedMapping = {
+                    'temp': sensorData?.tempvalue,
+                    'humid': sensorData?.humidvalue,
+                    'tempswitch': waterProcess?.tempControlled,
+                    'humidswitch': waterProcess?.humidControlled,
+                    'pump': waterProcess?.manualControl,
+                    'speed': waterProcess?.pumpSpeed,
+                    'tempstart': activationCondition?.conditions.temperature.start,
+                    'tempstop': activationCondition?.conditions.temperature.stop,
+                    'humidstart': activationCondition?.conditions.humidity.start,
+                    'humidstop': activationCondition?.conditions.humidity.stop
+                };
+
+                for (const [feed, value] of Object.entries(feedMapping)) {
+                    if (value !== undefined && value !== null) {
+                        await this.publishToDeviceFeed(device._id, feed, value.toString());
+                        console.log(`✅ Đã gửi dữ liệu lên ${feed}: ${value}`);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("🚨 Lỗi khi gửi toàn bộ dữ liệu lên Adafruit:", error);
+        }
+    }
+
+    // Hàm đăng ký nhận dữ liệu từ các feed của thiết bị
     subscribeToFeeds(client, device) {
         const feeds = [
             'temp', 'humid', 'tempswitch', 'humidswitch', 
@@ -93,48 +136,48 @@ class MqttService {
         });
     }
 
+    // Hàm gửi dữ liệu lên Adafruit
     async publishToDeviceFeed(deviceId, feed, value) {
         try {
             const device = await Device.findById(deviceId);
             if (!device) {
                 throw new Error('Thiết bị không tồn tại');
             }
-
+    
             const client = this.clients[deviceId];
             if (!client) {
                 throw new Error(`Thiết bị ${device.name} chưa kết nối MQTT`);
             }
-
+    
             const topic = `${device.usernameaio}/feeds/${feed}`;
+    
+            // Nếu feed thuộc nhóm kiểm soát, chuyển đổi giá trị thành chuỗi "ON"/"OFF"
+            const controlFeeds = ["tempControlled", "humidControlled", "manualControl"];
+            if (controlFeeds.includes(feed)) {
+                value = value === "true" ? "1" : "0";
+            }
+    
             client.publish(topic, value.toString());
-            console.log(`Gửi dữ liệu đến ${topic}: ${value}`);
+            console.log(`📤 Gửi dữ liệu đến ${topic}: ${value}`);
         } catch (error) {
-            console.error('Lỗi khi gửi dữ liệu:', error);
+            console.error("🚨 Lỗi khi gửi dữ liệu:", error);
         }
     }
+    
 
+    // Hàm xử lý các message từ Adafruit
     async handleMessage(device, topic, message) {
         try {
             if (!device) {
                 console.error("Lỗi: Device bị undefined!");
                 return;
             }
-    
+
             const value = message.toString();
             const feedType = this.getFeedTypeFromTopic(topic);
-            const newHistory = new History({
-                deviceId: device._id,
-                humidvalue: feedType === "humidity" ? value : "0",
-                tempvalue: feedType === "temperature" ? value : "0",
-                timestamp: new Date()
-            });
-    
-            await newHistory.save();
-            console.log("Lịch sử dữ liệu đã được cập nhật:", newHistory);
-    
-            // Cập nhật hoặc tạo mới SensorData
+
             let sensorData = await SensorData.findOne({ deviceId: device._id });
-    
+
             if (!sensorData) {
                 sensorData = new SensorData({
                     deviceId: device._id,
@@ -150,58 +193,36 @@ class MqttService {
                 }
                 sensorData.timestamp = new Date();
             }
-    
+
             await sensorData.save();
-            console.log("Dữ liệu nhiệt độ & độ ẩm đã được cập nhật:", sensorData);
-    
+            console.log("📡 Dữ liệu nhiệt độ & độ ẩm đã được cập nhật:", sensorData);
+
+            // Cập nhật WaterProcess nếu có
             if (['tempControlled', 'humidControlled', 'manualControl', 'pumpSpeed'].includes(feedType)) {
-                let waterProcess = await WaterProcess.findOne({ deviceId: device._id });
-    
-                if (!waterProcess) {
-                    // Tạo mới nếu chưa có dữ liệu
-                    waterProcess = new WaterProcess({
-                        deviceId: device._id,
-                        startTime: new Date(),
-                        tempControlled: false,
-                        humidControlled: false,
-                        manualControl: false,
-                        pumpSpeed: 0,
-                        status: "SCHEDULED"
-                    });
-                }
-    
-                // Cập nhật giá trị theo feed nhận được
-                if (feedType === 'tempControlled') {
-                    waterProcess.tempControlled = value === '1';
-                } else if (feedType === 'humidControlled') {
-                    waterProcess.humidControlled = value === '1';
-                } else if (feedType === 'manualControl') {
-                    waterProcess.manualControl = value === '1';
-                } else if (feedType === 'pumpSpeed') {
+                let waterProcess = await WaterProcess.findOneAndUpdate(
+                    { deviceId: device._id },
+                    { $set: { updatedAt: new Date() }, $setOnInsert: { startTime: new Date(), status: "SCHEDULED" } },
+                    { upsert: true, new: true }
+                );
+
+                if (feedType === 'pumpSpeed') {
                     waterProcess.pumpSpeed = parseInt(value);
+                } else {
+                    waterProcess[feedType] = value === '1';
                 }
-    
-                waterProcess.updatedAt = new Date();
+
                 await waterProcess.save();
-                console.log(`Đã cập nhật WaterProcess cho thiết bị ${device._id}:`, waterProcess);
+                console.log(`💧 Đã cập nhật WaterProcess cho thiết bị ${device._id}:`, waterProcess);
             }
-            
+
+            // Cập nhật ActivationCondition nếu có
             if (['tempStart', 'tempStop', 'humidStart', 'humidStop'].includes(feedType)) {
-                let condition = await ActivationCondition.findOne({ deviceId: device._id });
-    
-                if (!condition) {
-                    condition = new ActivationCondition({
-                        deviceId: device._id,
-                        description: "connect to adafruit",
-                        flag: true,
-                        conditions: {
-                            temperature: { min: 0, max: 0 },
-                            humidity: { min: 0, max: 0 }
-                        }
-                    });
-                }
-    
-                // Cập nhật giá trị tương ứng
+                let condition = await ActivationCondition.findOneAndUpdate(
+                    { deviceId: device._id },
+                    { $set: { updatedAt: new Date() }, $setOnInsert: { description: "connect to adafruit", flag: true } },
+                    { upsert: true, new: true }
+                );
+
                 if (feedType === 'tempStart') {
                     condition.conditions.temperature.start = value;
                 } else if (feedType === 'tempStop') {
@@ -211,19 +232,16 @@ class MqttService {
                 } else if (feedType === 'humidStop') {
                     condition.conditions.humidity.stop = value;
                 }
-    
-                condition.updatedAt = new Date();
-                await condition.save();
-                console.log(`Đã cập nhật ActivationCondition cho thiết bị ${device._id}:`, condition);
-            }
-    
-    
 
+                await condition.save();
+                console.log(`🔥 Đã cập nhật ActivationCondition cho thiết bị ${device._id}:`, condition);
+            }
         } catch (error) {
-            console.error("Lỗi xử lý MQTT message:", error);
+            console.error("🚨 Lỗi xử lý MQTT message:", error);
         }
     }
-    
+
+    // Hàm xác định loại feed từ topic
     getFeedTypeFromTopic(topic) {
         const feed = topic.split('/').pop();
         const feedMap = {
@@ -241,6 +259,7 @@ class MqttService {
         return feedMap[feed] || feed;
     }
 
+    // Ngắt kết nối MQTT khi cần
     disconnect() {
         Object.values(this.clients).forEach(client => client.end());
         console.log('Disconnected from MQTT broker');

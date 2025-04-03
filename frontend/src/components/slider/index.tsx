@@ -2,10 +2,14 @@
 import React from "react";
 
 
-const Slider: React.FC<SliderProps> = ({ value, onChange }  :SliderProps) => {
+const Slider: React.FC<SliderProps> = ({ value, onChange, onValueChange }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(event.target.value);
     onChange(newValue);
+
+    if (onValueChange) {
+      onValueChange();
+    }
   };
 
   return (
@@ -25,5 +29,6 @@ const Slider: React.FC<SliderProps> = ({ value, onChange }  :SliderProps) => {
     </div>
   );
 };
+
 
 export default Slider;

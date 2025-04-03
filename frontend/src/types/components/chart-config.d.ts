@@ -1,3 +1,3 @@
 declare type HistoryChartProps = {
-    data: Array<{ time: string; temperature: number;humidity: number  }>;
+    data: Array<{ time_ICT: string; temperature: number;humidity: number  }>;
 };

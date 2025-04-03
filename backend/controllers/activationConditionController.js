@@ -15,12 +15,18 @@ exports.getAllConditions = async (req, res) => {
 // Get conditions by device ID
 exports.getDeviceConditions = async (req, res) => {
   try {
-    const conditions = await ActivationCondition.find({ deviceId: req.params.deviceId })
+    const conditions = await ActivationCondition.findOne({ deviceId: req.params.deviceId })
       .populate('deviceId', 'name location')
-      .populate('waterProcessId', 'startTime duration');
-    res.json(conditions);
+      .populate({ path: 'waterProcessId', select: 'startTime duration', strictPopulate: false });
+
+    if (!conditions) {
+      return res.status(404).json({ message: "Không tìm thấy điều kiện kích hoạt cho thiết bị này." });
+    }
+
+    res.json(conditions.conditions); 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Lỗi API:", err);
+    res.status(500).json({ message: "Lỗi máy chủ, vui lòng kiểm tra log." });
   }
 };
 
@@ -60,36 +66,60 @@ exports.createCondition = async (req, res) => {
 // Update activation condition
 exports.updateCondition = async (req, res) => {
   try {
-    const { description, conditions, flag } = req.body;
-    const condition = await ActivationCondition.findById(req.params.id);
+    const { conditions } = req.body;
+    const deviceId = req.params.id;
+
+    if (!conditions) {
+      return res.status(400).json({ message: 'Điều kiện không được để trống' });
+    }
+
+    // Tìm điều kiện kích hoạt của thiết bị
+    const condition = await ActivationCondition.findOne({ deviceId });
     
     if (!condition) {
       return res.status(404).json({ message: 'Không tìm thấy điều kiện kích hoạt' });
     }
 
-    // Validate conditions if provided
-    if (conditions && (!conditions.temperature || !conditions.humidity)) {
-      return res.status(400).json({ 
-        message: 'Điều kiện phải bao gồm nhiệt độ và độ ẩm' 
-      });
-    }
-
-    // Update condition
-    condition.description = description || condition.description;
+    // Kiểm tra điều kiện nếu đã cung cấp
     if (conditions) {
-      condition.conditions = conditions;
-      // Publish new thresholds to Adafruit
-      await mqttService.publishThresholds(condition.deviceId, conditions);
-    }
-    condition.flag = flag !== undefined ? flag : condition.flag;
+      if (!conditions.temperature || !conditions.humidity) {
+        return res.status(400).json({ 
+          message: 'Điều kiện phải bao gồm cả nhiệt độ và độ ẩm' 
+        });
+      }
 
+      // Kiểm tra các giá trị start và stop có hợp lệ không
+      const { temperature, humidity } = conditions;
+      if (
+        isNaN(temperature.start) || isNaN(temperature.stop) ||
+        isNaN(humidity.start) || isNaN(humidity.stop)
+      ) {
+        return res.status(400).json({
+          message: 'Giá trị start và stop của nhiệt độ và độ ẩm phải là số hợp lệ'
+        });
+      }
+
+      // Cập nhật các điều kiện
+      condition.conditions = conditions;
+      
+    //   // Gửi thông tin lên Adafruit thông qua MQTT
+    //   await mqttService.publishToDeviceFeed(deviceId, 'tempstart', temperature.start.toString());
+    //   await mqttService.publishToDeviceFeed(deviceId, 'tempstop', temperature.stop.toString());
+    //   await mqttService.publishToDeviceFeed(deviceId, 'humidstart', humidity.start.toString());
+    //   await mqttService.publishToDeviceFeed(deviceId, 'humidstop', humidity.stop.toString());
+   }
+
+    // Lưu điều kiện đã cập nhật vào cơ sở dữ liệu
     await condition.save();
 
+    // Trả về điều kiện đã cập nhật
     res.json(condition);
   } catch (err) {
+    console.error('Lỗi khi cập nhật điều kiện:', err.message);
     res.status(400).json({ message: err.message });
   }
 };
+
 
 // Delete activation condition
 exports.deleteCondition = async (req, res) => {

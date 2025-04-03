@@ -26,7 +26,7 @@ const HistoryChart: React.FC<HistoryChartProps> = ({ data }: HistoryChartProps) 
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" />
+          <XAxis dataKey="time_ICT" />
           <YAxis />
           <Tooltip
             formatter={(value: number, name: string) =>

@@ -16,7 +16,7 @@ router.get('/device/:deviceId', activationConditionController.getDeviceCondition
 router.post('/', activationConditionController.createCondition);
 
 // Update condition
-router.put('/:id', activationConditionController.updateCondition);
+router.patch('/:id', activationConditionController.updateCondition);
 
 // Delete condition
 router.delete('/:id', activationConditionController.deleteCondition);

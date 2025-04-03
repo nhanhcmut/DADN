@@ -23,10 +23,8 @@ const WaterProcessSchema = new mongoose.Schema({
     default: false
   },
   pumpSpeed: {
-    type: Number,
-    min: 0,
-    max: 100,
-    default: 0
+    type: String,
+    default: "0"
   },
   status: {
     type: String,
