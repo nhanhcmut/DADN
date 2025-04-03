@@ -145,11 +145,6 @@ class MqttService {
     
             const topic = `${device.usernameaio}/feeds/${feed}`;
     
-            const controlFeeds = ["tempControlled", "humidControlled", "manualControl"];
-            if (controlFeeds.includes(feed)) {
-                value = value === "true" ? "1" : "0";
-            }
-    
             client.publish(topic, value.toString());
             console.log(`Gửi dữ liệu đến ${topic}: ${value}`);
 
@@ -165,11 +160,6 @@ class MqttService {
             const receivedValue = message.toString();
     
       
-            if (this.lastPublished[topic] === receivedValue) {
-                console.log(`Bỏ qua phản hồi từ chính publish: ${topic} - ${receivedValue}`);
-                return;
-            }
-    
             if (!deviceId) {
                 console.error("Lỗi: Device bị undefined!");
                 return;

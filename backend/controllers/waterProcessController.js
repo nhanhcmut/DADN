@@ -89,17 +89,20 @@ exports.updateProcessControls = async (req, res) => {
     // Kiểm tra và cập nhật nếu giá trị thay đổi
     if (previousProcess.tempControlled !== tempControlled) {
       process.tempControlled = tempControlled;
-      await mqttService.publishToDeviceFeed(req.params.id, 'tempswitch', tempControlled);
+      const tempControlledValue = tempControlled ? "1" : "0"; // Chuyển boolean thành chuỗi "1" hoặc "0"
+      await mqttService.publishToDeviceFeed(req.params.id, 'tempswitch', tempControlledValue);
     }
-
+    
     if (previousProcess.humidControlled !== humidControlled) {
       process.humidControlled = humidControlled;
-      await mqttService.publishToDeviceFeed(req.params.id, 'humidswitch', humidControlled);
+      const humidControlledValue = humidControlled ? "1" : "0"; // Chuyển boolean thành chuỗi "1" hoặc "0"
+      await mqttService.publishToDeviceFeed(req.params.id, 'humidswitch', humidControlledValue);
     }
-
+    
     if (previousProcess.manualControl !== manualControl) {
       process.manualControl = manualControl;
-      await mqttService.publishToDeviceFeed(req.params.id, 'pump', manualControl);
+      const manualControlValue = manualControl ? "1" : "0"; // Chuyển boolean thành chuỗi "1" hoặc "0"
+      await mqttService.publishToDeviceFeed(req.params.id, 'pump', manualControlValue);
     }
 
     if (previousProcess.pumpSpeed !== pumpSpeed && pumpSpeed !== undefined && pumpSpeed !== null
