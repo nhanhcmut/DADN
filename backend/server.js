@@ -22,12 +22,14 @@ connectDB();
 mqttService.connect();
 
 // Middleware
-app.use(
-    cors({
-      origin: ["http://localhost:3002", "https://dadn-8nv0.onrender.com"],
-      credentials: true,
-    })
-  );
+const corsOptions = {
+  origin: ["http://localhost:3002", "https://dadn-8nv0.onrender.com"],
+  methods: ["GET", "POST","PUT","PATCH","DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
   
 app.use(express.json());
 
