@@ -22,16 +22,15 @@ connectDB();
 mqttService.connect();
 
 // Middleware
-const corsOptions = {
-  origin: ["http://localhost:3002", "https://dadn-8nv0.onrender.com"],
-  credentials: true,
-  methods: ["GET", "POST","DELETE","PATCH","OPTIONS"],
+app.use(
+  cors({
+    origin: ["http://localhost:3002", "https://dadn-8nv0.onrender.com"],
+    credentials: true,
+    methods: ["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
 
-};
+  })
+);
 
-app.use(cors(corsOptions));
-
-  
 app.use(express.json());
 
 // Routes
@@ -45,8 +44,8 @@ app.use('/api/history', historyRoutes);
 
 // Cleanup MQTT connection on server shutdown
 process.on('SIGINT', () => {
-    mqttService.disconnect();
-    process.exit();
+  mqttService.disconnect();
+  process.exit();
 });
 
 const PORT = process.env.PORT || 5000;
