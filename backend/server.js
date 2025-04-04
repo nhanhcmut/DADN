@@ -23,7 +23,7 @@ mqttService.connect();
 
 // Middleware
 const corsOptions = {
-  origin: ["http://localhost:3002", "https://dadn-8nv0.onrender.com"],
+  origin: ["http://localhost:3002", "https://dadn-beta.vercel.app"],
   methods: ["GET", "POST","PUT","PATCH","DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
