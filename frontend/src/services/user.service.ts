@@ -9,7 +9,7 @@ export interface ResetPasswordDto {
 
 export class UserOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api/users');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
     }
 
     async resetPassword(payload: ResetPasswordDto, token: string) {

@@ -11,7 +11,7 @@ export interface DeviceDto {
 
 export class DeviceOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api`);
     }
 
     async createDevice(payload: DeviceDto) {

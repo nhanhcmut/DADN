@@ -14,7 +14,7 @@ export const register = createAsyncThunk<
     RegisterDto,
     { rejectValue: RejectedValue }
 >(
-    'http://localhost:5000/api/register',
+    'api/register',
     async (payload, { rejectWithValue }) => {
         try {  
             const authOp = new AuthOperation();

@@ -16,7 +16,7 @@ export interface ActivationConditionDto {
 
 export class ActivationConditionOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api/activation-conditions');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api/activation-conditions`);
     }
 
     async updateActivationCondition(payload: ActivationConditionDto ,id:string) {

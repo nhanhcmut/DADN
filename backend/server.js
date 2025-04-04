@@ -24,10 +24,11 @@ mqttService.connect();
 // Middleware
 app.use(
     cors({
-        origin: "http://localhost:3002",
-        credentials: true,
+      origin: ["http://localhost:3002", "https://dadn-8nv0.onrender.com"],
+      credentials: true,
     })
-);
+  );
+  
 app.use(express.json());
 
 // Routes

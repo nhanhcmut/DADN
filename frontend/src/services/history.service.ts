@@ -5,7 +5,7 @@ import { BaseOperation } from "./base.service";
 
 export class HistoryOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api/history');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api/history`);
     }
 
     async getHistoryData(id:string) {

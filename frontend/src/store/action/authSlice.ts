@@ -10,7 +10,7 @@ const initialState: AuthState = {
     loading: false,
 };
 export const login = createAsyncThunk<StaffInfo, LoginDto, { rejectValue: RejectedValue }>(
-    'auth/login',
+    '/login',
     async (payload, { rejectWithValue }) => {
       try {
         const authOp = new AuthOperation();

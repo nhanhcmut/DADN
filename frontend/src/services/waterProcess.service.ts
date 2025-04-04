@@ -10,7 +10,7 @@ export interface DeviceDto{
 
 export class WaterProcessOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api/water-processes');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api/water-processes`);
     }
 
     async updateWaterProcess(payload: DeviceDto ,id:string) {

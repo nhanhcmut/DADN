@@ -18,7 +18,7 @@ export interface ForgotPasswordDto {
 
 export class AuthOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api`);
     }
 
     async login(payload: LoginDto) {

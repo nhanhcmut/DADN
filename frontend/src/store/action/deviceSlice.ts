@@ -10,7 +10,7 @@ export const createDevice = createAsyncThunk<
     DeviceDto,
     { rejectValue: RejectedValue }
 >(
-    'http://localhost:5000/api/devices',
+    'api/devices',
     async (payload, { rejectWithValue }) => {
         try { 
             

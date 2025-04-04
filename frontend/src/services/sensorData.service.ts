@@ -4,7 +4,7 @@ import { BaseOperation } from "./base.service";
 
 export class SensorDataOperation extends BaseOperation {
     constructor() {
-        super('http://localhost:5000/api/sensor-data');
+        super(`${process.env.NEXT_PUBLIC_API_URL}/api/sensor-data`);
     }
 
     async getSensorData(id:string) {
