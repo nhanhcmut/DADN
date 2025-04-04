@@ -12,6 +12,7 @@ declare type StaffInfo = {
     id: string;
     updatedAt: string;
     username: string;
+    token:string;
  
 };
 

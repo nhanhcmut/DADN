@@ -23,9 +23,9 @@ const CircleProgress: React.FC<CircleProgessProps> = ({
     } else if (type === "humidity") {
       if (value >= 75) return "#4caf50"; // Green
       if (value >= 50) return "#ffeb3b"; // Yellow
-      return "#f44336"; // Red
+      return "#f44336";
     }
-    return "#e6e6e6"; // Default grey
+    return "#e6e6e6";
   };
 
   const getName = (type: "temperature" | "humidity"): string => {
@@ -81,17 +81,19 @@ const CircleProgress: React.FC<CircleProgessProps> = ({
           textAnchor="middle"
           fontSize="50"
           fontWeight="bold"
+          className="fill-black dark:fill-white"
+
         >
-          {value}
-          {type === "temperature" ? "°C" : "%"}
+          {value} {type === "temperature" ? "°C" : "%"}
         </text>
+
         <text
           x="150"
           y="195"
           dominantBaseline="middle"
           textAnchor="middle"
           fontSize="30"
-          fill="#555"
+          className="fill-[#555] dark:fill-[#999999]"
         >
           {name}
         </text>

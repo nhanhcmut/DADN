@@ -9,26 +9,28 @@ const initialState: AuthState = {
     error: null,
     loading: false,
 };
-
-
 export const login = createAsyncThunk<StaffInfo, LoginDto, { rejectValue: RejectedValue }>(
     'auth/login',
     async (payload, { rejectWithValue }) => {
-        try {
-            const authOp = new AuthOperation();
-            const response = await authOp.login(payload);
-
-            if (response.success) {
-                setTokenInCookie(response.data.token);
-                return response.data as StaffInfo; 
-            } else {
-                return rejectWithValue({ message: response.message });
-            }
-        } catch (error: any) {
-            return rejectWithValue({ message: error.message || 'Unexpected error occurred.' });
+      try {
+        const authOp = new AuthOperation();
+        const response = await authOp.login(payload);
+        if (response.success) {
+            const staffInfo = response.data as StaffInfo;
+          setTokenInCookie(staffInfo.token); 
+          return response.data as StaffInfo;
+        } else {
+          return rejectWithValue({ message: response.message || 'Login failed.' });
         }
+      } catch (error: any) {
+        // Handle any unexpected errors and reject the promise
+        return rejectWithValue({
+          message: error.message || 'Unexpected error occurred.',
+        });
+      }
     }
-);
+  );
+  
 
 
 export const fetchUserInfo = createAsyncThunk<StaffInfo, void, { rejectValue: RejectedValue }>(

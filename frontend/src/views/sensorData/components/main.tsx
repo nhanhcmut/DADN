@@ -272,7 +272,7 @@ const SensorDataMain = () => {
         {(isTemperatureOn || isHumidityOn) && (
           <Container className="flex w-fit items-center justify-center gap-4">
             {isTemperatureOn && (
-              <div className="w-[230px] items-center justify-center flex flex-col">
+              <div className="w-[230px] items-center gap-4 justify-center flex flex-col">
                 <h1 className="text-[20px] font-b font-medium text-center">
                   {intl("temperaturestart")}
                 </h1>
@@ -280,19 +280,19 @@ const SensorDataMain = () => {
                   value={temperatureStart}
                   onChange={setTemperatureStart}
                 />
-                <h1 className="text-[20px] font-b font-medium text-center">
+                <h1 className="text-[20px] font-b pt-2 font-medium text-center">
                   {intl("temperaturestop")}
                 </h1>
                 <Slider value={temperatureStop} onChange={setTemperatureStop} />
               </div>
             )}
             {isHumidityOn && (
-              <div className="w-[230px] items-center justify-center flex flex-col">
+              <div className="w-[230px] items-center gap-4 justify-center flex flex-col">
                 <h1 className="text-[20px] font-b font-medium text-center">
                   {intl("humiditystart")}
                 </h1>
                 <Slider value={humidityStart} onChange={setHumidityStart} />
-                <h1 className="text-[20px] font-b font-medium text-center">
+                <h1 className="text-[20px] font-b pt-2 font-medium text-center">
                   {intl("humiditystop")}
                 </h1>
                 <Slider value={humidityStop} onChange={setHumidityStop} />

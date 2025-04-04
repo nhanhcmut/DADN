@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { AppDispatch, RootState } from "@/store";
-import InfoContent from "./userInfo";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Dropdown from "@/components/dropdown";
