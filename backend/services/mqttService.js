@@ -3,6 +3,7 @@ const Device = require('../models/Device');
 const SensorData = require('../models/SensorData');
 const WaterProcess = require('../models/WaterProcess');
 const ActivationCondition = require('../models/ActivationCondition');
+const History = require('../models/History');
 
 class MqttService {
     constructor() {
@@ -189,7 +190,7 @@ class MqttService {
             // Cập nhật SensorData nếu là cảm biến
             if (['temperature', 'humidity'].includes(feedType)) {
                 let sensorData = await SensorData.findOne({ deviceId: deviceId });
-    
+            
                 if (!sensorData) {
                     sensorData = new SensorData({
                         deviceId: deviceId,
@@ -200,19 +201,67 @@ class MqttService {
                 } else {
                     if (feedType === "temperature") {
                         sensorData.tempvalue = receivedValue;
+                        const timeThreshold = new Date();
+                        timeThreshold.setSeconds(timeThreshold.getSeconds() - 0); // Giảm 2 giây để kiểm tra dữ liệu gần nhất
+                        
+                        let existingHistory = await History.findOne({
+                            deviceId: deviceId,
+                            timestamp: { $gte: timeThreshold, $lte: new Date() } // Kiểm tra trong khoảng từ 2 giây trước đến hiện tại
+                        });
+                        
+                        
+                        if (existingHistory) {
+                            existingHistory.tempvalue =receivedValue;
+                            await existingHistory.save();
+                            console.log(`Lịch sử đã được cập nhật:`, existingHistory);
+                        } else {
+                            await History.create({
+                                deviceId: deviceId,
+                                humidvalue: sensorData.humidvalue,
+                                tempvalue: receivedValue,
+                                timestamp: new Date()
+                            });
+                    
+                            console.log(`Dữ liệu lịch sử mới đã được tạo.`);
+                        }
+                    
                     } else if (feedType === "humidity") {
                         sensorData.humidvalue = receivedValue;
+                        const timeThreshold = new Date();
+                        timeThreshold.setSeconds(timeThreshold.getSeconds() - 0); // Giảm 2 giây để kiểm tra dữ liệu gần nhất
+                        
+                        let existingHistory = await History.findOne({
+                            deviceId: deviceId,
+                            timestamp: { $gte: timeThreshold, $lte: new Date() } // Kiểm tra trong khoảng từ 2 giây trước đến hiện tại
+                        });
+                        
+                        
+                        if (existingHistory) {
+                            existingHistory.humidvalue =receivedValue;
+                            await existingHistory.save();
+                            console.log(`Lịch sử đã được cập nhật:`, existingHistory);
+                        } else {
+                            await History.create({
+                                deviceId: deviceId,
+                                humidvalue: receivedValue,
+                                tempvalue: sensorData.tempvalue,
+                                timestamp: new Date()
+                            });
+                    
+                            console.log(`Dữ liệu lịch sử mới đã được tạo.`);
+                        }
                     }
                     sensorData.timestamp = new Date();
                 }
-    
+            
                 await sensorData.save();
                 console.log(`Dữ liệu SensorData đã được cập nhật:`, sensorData);
-    
+            
                 // Cập nhật lại lastPublished sau khi lưu vào DB
                 this.lastPublished[topic] = receivedValue;
+            
             }
-    
+            
             // Cập nhật WaterProcess nếu là điều khiển bơm
             if (['tempControlled', 'humidControlled', 'manualControl', 'pumpSpeed'].includes(feedType)) {
                 let waterProcess = await WaterProcess.findOne({ deviceId: deviceId });
