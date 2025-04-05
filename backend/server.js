@@ -24,7 +24,7 @@ mqttService.connect();
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3002", "https://dadn-beta.vercel.app"],
+    origin: ["http://localhost:3002", "https://dadn-sensorpump.vercel.app"],
     credentials: true,
     methods: ["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
 
