@@ -127,7 +127,7 @@ const ForgotPasswordLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
             {intl("AlreadyRegister")}
             <Link href="/">
               <button className="ml-1 text-blue-600 ">
-                <p> {intl("Login")} </p>
+                <p className=" hover:underline " > {intl("Login")} </p>
               </button>
             </Link>
           </p>

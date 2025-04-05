@@ -145,7 +145,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
             <div className="flex justify-end pr-3">
               <Link href="/forgot_password">
                 <button className="">
-                  <p><i>{intl("Forgot")} </i> </p>
+                  <p className=" hover:underline "><i>{intl("Forgot")} </i> </p>
                 </button>
               </Link>
             </div>
@@ -168,7 +168,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
             {intl("YetRegister")}
             <Link href="/register">
               <button className="ml-1 text-blue-600 ">
-                <p> {intl("Register")} </p>
+                <p className=" hover:underline " > {intl("Register")} </p>
               </button>
             </Link>
           </p>
