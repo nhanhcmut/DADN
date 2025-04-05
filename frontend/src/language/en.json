@@ -53,7 +53,7 @@
     "pump": "Pump",
     "speed": "Speed"
   },
-  "Device": {
+"Device": {
     "InfoTitle": "Add Device",
     "name": "Device Name",
     "location": "Location",
@@ -63,8 +63,11 @@
     "locationPlaceholder": "Enter location",
     "usernameaioPlaceholder": "Enter Adafruit username",
     "keyaioPlaceholder": "Enter Adafruit key",
-    "Enter": "Confirm"
-  },
+    "Enter": "Confirm",
+    "MissingField": "Please fill in all required information",
+    "Success": "Device added successfully",
+    "Fail": "Device addition failed"
+},
   "Routes": {
     "Management": "Management",
     "sensor_data": "Sensor data",
@@ -107,7 +110,7 @@
     "MissingField": "Please fill in all required fields",
     "missemail": "Email not found",
     "Success": "Password changed successfully",
-    "fail": "Password change failed",
+    "Fail": "Old password is incorrect",
     "Enter": "Confirm",
     "checkpasswordfail": "New password does not match"
   },

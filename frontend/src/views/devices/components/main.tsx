@@ -47,7 +47,7 @@ const DevicesMain = () => {
     if (!name || !location || !usernameaio || !keyaio) {
       addNotification({
         type: "error",
-        message: intl("Email and password are required"),
+        message: intl("MissingField"),
       });
       return;
     }
@@ -70,17 +70,18 @@ const DevicesMain = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && openAdd) {
         e.preventDefault();
         handleSubmit();
       }
     };
-
+  
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [name, location, usernameaio, keyaio]);
+  }, [openAdd]);
+  
 
   const fetchData = useCallback(async () => {
     try {

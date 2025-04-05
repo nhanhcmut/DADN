@@ -68,7 +68,10 @@
     "locationPlaceholder": "Nhập vị trí",
     "usernameaioPlaceholder": "Nhập nên người dùng Adafruit",
     "keyaioPlaceholder": "Nhập mã khóa Adafruit",
-    "Enter": "Xác nhận"
+    "Enter": "Xác nhận",
+    "MissingField": "Vui lòng điền đầy đủ thông tin",
+    "Success":"Thêm thiết bị thành công",
+    "Fail": "Thêm thiết bị thất bại"
   },
   "Notification": {
     "DefaultTitle": "Thông báo",
@@ -107,7 +110,7 @@
     "MissingField": "Vui lòng điền đầy đủ thông tin",
     "missemail": "Không lấy được email",
     "Success": "Dổi mật khẩu thành công",
-    "fail": "Đổi mật khẩu thất bại",
+    "Fail": "Mật khẩu cũ không đúng",
     "Enter": "Xác nhận",
     "checkpassworfail": "Mật khẩu mới không khớp"
   },

@@ -61,10 +61,6 @@ const Avatar = () => {
     else {
       setIsError(false);
       handleResetPassword();
-      setNewPassword("");
-      setPassword("");
-      setReNewPassword("");
-      handleCloseInfo();
     }
   };
 
