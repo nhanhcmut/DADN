@@ -266,7 +266,7 @@ const SensorDataMain = () => {
             <h1 className="text-[20px] font-b font-medium text-center">
               {intl("speed")}
             </h1>
-            <Slider value={speed} onChange={(newValue) => setSpeed(newValue)} />
+            <Slider value={speed} onChange={(newValue) => setSpeed(newValue)} min={0} max={100} />
           </Container>
         </div>
         {(isTemperatureOn || isHumidityOn) && (
@@ -279,11 +279,15 @@ const SensorDataMain = () => {
                 <Slider
                   value={temperatureStart}
                   onChange={setTemperatureStart}
+                  min={0} max={100}
                 />
                 <h1 className="text-[20px] font-b pt-2 font-medium text-center">
                   {intl("temperaturestop")}
                 </h1>
-                <Slider value={temperatureStop} onChange={setTemperatureStop} />
+                <Slider value={temperatureStop} 
+                onChange={setTemperatureStop} 
+                min={0} max={temperatureStart}
+                />
               </div>
             )}
             {isHumidityOn && (
@@ -291,11 +295,11 @@ const SensorDataMain = () => {
                 <h1 className="text-[20px] font-b font-medium text-center">
                   {intl("humiditystart")}
                 </h1>
-                <Slider value={humidityStart} onChange={setHumidityStart} />
+                <Slider value={humidityStart} onChange={setHumidityStart} min={0} max={100} />
                 <h1 className="text-[20px] font-b pt-2 font-medium text-center">
                   {intl("humiditystop")}
                 </h1>
-                <Slider value={humidityStop} onChange={setHumidityStop} />
+                <Slider value={humidityStop} onChange={setHumidityStop} min={humidityStart} max={100} />
               </div>
             )}
           </Container>
