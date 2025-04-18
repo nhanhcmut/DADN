@@ -56,7 +56,7 @@ const SensorDataMain = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchSensorData();
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [id]);
@@ -87,7 +87,7 @@ const SensorDataMain = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchHistoryData();
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [id]);
@@ -121,11 +121,8 @@ const SensorDataMain = () => {
 
  const fetchActivationCondition = async () => {
   try {
-    console.log("fetchActivationCondition");
 
     const response = await activationConditionOp.getActivationCondition(id);
-    console.log(response);
-
     const data = response.data as ActivationConditionDto;
     if (data && data.conditions) {
       setTemperatureStart(data.conditions.temperature.start);
@@ -188,9 +185,7 @@ const SensorDataMain = () => {
         payload,
         id
       );
-      if (response.success) {
-        console.log(response.data);
-      } else {
+      if( !response.success) {
         console.warn("Lỗi từ server:", response.message);
       }
     } catch (error) {
@@ -227,6 +222,19 @@ const SensorDataMain = () => {
     }
   }, [temperatureStart, temperatureStop, humidityStart, humidityStop, isDataFetched]);
   
+  useEffect(() => {
+    if (temperatureStart < temperatureStop) {
+      setTemperatureStop(temperatureStart);
+    }
+  }, [temperatureStart]);
+
+  useEffect(() => {
+    if (humidityStart > humidityStop) {
+      setHumidityStop(humidityStart);
+    }
+  }, [humidityStart]);
+
+
   return (
     <div className="w-full max-h-screen gap-4 flex flex-col pb-4 ">
       <div className="flex w-full h-fit flex-row gap-4">
