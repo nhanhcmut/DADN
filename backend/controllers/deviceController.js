@@ -110,7 +110,7 @@ exports.createDevice = async (req, res) => {
         condition
       }
     });
-
+    mqttService.connectAllDevices();
   } catch (error) {
     res.status(400).json({
       success: false, 
@@ -137,7 +137,7 @@ exports.updateDevice = async (req, res) => {
       });
     }
 
-    mqttService.updateCredentials(usernameaio, keyaio);
+    mqttService.connectAllDevices();
 
     res.status(200).json({
       success: true,
@@ -164,7 +164,7 @@ exports.deleteDevice = async (req, res) => {
 
     // Delete the device
     const device = await Device.findByIdAndDelete(req.params.id);
-    
+    mqttService.connectAllDevices();
     if (!device) {
       return res.status(404).json({ message: 'Không tìm thấy thiết bị' });
     }

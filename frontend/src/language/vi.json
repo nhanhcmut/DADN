@@ -60,6 +60,7 @@
   },
   "Device": {
     "InfoTitle": "Thêm thiết bị",
+    "InfoTitleEdit": "Cập nhật thông tin thiết bị",
     "name": "Tên thiết bị",
     "location": "Vị trí",
     "usernameaio": "Tên người dùng Adafruit",
@@ -71,8 +72,12 @@
     "Enter": "Xác nhận",
     "MissingField": "Vui lòng điền đầy đủ thông tin",
     "Success":"Thêm thiết bị thành công",
-    "Fail": "Thêm thiết bị thất bại"
+    "Fail": "Thêm thiết bị thất bại",
+    "Update":"Cập Nhật",
+    "Delete":"Xóa thiết bị"
+
   },
+  
   "Notification": {
     "DefaultTitle": "Thông báo",
     "DefaultCloseButton": "Đóng",

@@ -29,7 +29,7 @@ const DevicesMain = () => {
   const [location, setLocation] = useState<string>("");
   const [usernameaio, setUsernameaio] = useState<string>("");
   const [keyaio, setKeyaio] = useState<string>("");
-  const device = new DeviceOperation();
+  const deviceOp = new DeviceOperation();
   const [devices, setDevices] = useState<DeviceData[]>([]);
   const router = useRouter(); 
   const handleAddClick = () => {
@@ -85,7 +85,7 @@ const DevicesMain = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await device.getDevice();
+      const response = await deviceOp.getDevice();
       if (response?.data && Array.isArray(response.data)) {
         const filteredDevices: DeviceData[] = response.data.map(
           (device: any) => ({

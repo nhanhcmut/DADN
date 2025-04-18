@@ -55,6 +55,7 @@
   },
 "Device": {
     "InfoTitle": "Add Device",
+    "InfoTitleEdit": "Update device information",
     "name": "Device Name",
     "location": "Location",
     "usernameaio": "Adafruit Username",
@@ -66,7 +67,9 @@
     "Enter": "Confirm",
     "MissingField": "Please fill in all required information",
     "Success": "Device added successfully",
-    "Fail": "Device addition failed"
+    "Fail": "Device addition failed",
+    "Update":"Update",
+    "Delete":"Delete device"
 },
   "Routes": {
     "Management": "Management",

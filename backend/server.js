@@ -26,7 +26,7 @@ app.use(
   cors({
     origin: ["http://localhost:3002", "https://dadn-sensorpump.vercel.app"],
     credentials: true,
-    methods: ["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
+    methods: ["GET", "POST", "DELETE", "PATCH", "PUT" , "OPTIONS"],
 
   })
 );

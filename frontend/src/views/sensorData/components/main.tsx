@@ -146,7 +146,7 @@ const SensorDataMain = () => {
   }, [id]);
 
   const updateWaterProcess = async () => {
-    setLoading(true); // Set loading to true while updating
+    setLoading(true);
     const payload = {
       tempControlled: isTemperatureOn,
       humidControlled: isHumidityOn,

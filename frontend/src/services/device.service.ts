@@ -22,6 +22,22 @@ export class DeviceOperation extends BaseOperation {
         
         return this.request('POST', `devices`, payload , token);
     }
+    async editDevice(payload: DeviceDto,id :string) {
+        const token=getTokenFromCookie();
+        if (!token) {
+            throw new Error("Token is missing. Please log in.");
+        }
+        
+        return this.request('PUT', `devices/${id}`, payload , token);
+    }
+    async deleteDevice(id :string) {
+        const token=getTokenFromCookie();
+        if (!token) {
+            throw new Error("Token is missing. Please log in.");
+        }
+        
+        return this.request('DELETE', `devices/${id}`, undefined , token);
+    }
     async getDevice() {
         const token=getTokenFromCookie();
         if (!token) {
