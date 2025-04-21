@@ -41,6 +41,9 @@ const Avatar = () => {
   };
 
   const handleCloseInfo = () => {
+    setNewPassword("");
+    setPassword("");
+    setReNewPassword("");
     setOpenInfo(false);
     setOpenPass(false);
   };
@@ -61,6 +64,7 @@ const Avatar = () => {
     else {
       setIsError(false);
       handleResetPassword();
+      handleCloseInfo();
     }
   };
 

@@ -17,7 +17,7 @@ const HistorySchema = new mongoose.Schema({
     timestamp: {
         type: Date,
         default: Date.now,
-        expires: 86400 // 86400 giây = 1 ngày
+        expires: 604800 // 86400 giây = 1 ngày
     }
 }, {
     timestamps: true
