@@ -15,7 +15,6 @@ class MqttService {
     async getAllDevices() {
         try {
             const devices = await Device.find({});
-            console.log('Danh sách thiết bị từ MongoDB:', devices);
             return devices;
         } catch (error) {
             console.error('Lỗi khi lấy danh sách thiết bị:', error);
