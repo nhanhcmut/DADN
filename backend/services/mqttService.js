@@ -59,7 +59,6 @@ class MqttService {
         });
 
         client.on('connect', async () => {
-            console.log(`Thiết bị ${device.name} đã kết nối MQTT`);
             this.subscribeToFeeds(client, device);
 
             setTimeout(async () => {
@@ -160,7 +159,6 @@ class MqttService {
                 return;
             }
     
-            console.log(`Nhận dữ liệu từ ${topic}: ${receivedValue}`);
             
             // Xác định loại dữ liệu từ topic
             const feedMap = {
