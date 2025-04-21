@@ -65,13 +65,12 @@ class MqttService {
 
             setTimeout(async () => {
                 await this.sendDeviceDataToAdafruit(client, device);
-                console.log("Dữ liệu đã gửi sau khi chờ.");
             }, 3000); 
          
         });
 
         client.on('error', (error) => {
-            console.error(`Lỗi kết nối MQTT cho thiết bị ${device.name}:`, error);
+            console.error(`Lỗi kết nối MQTT cho thiết bị ${device.name}`);
         });
 
         client.on('message', async (topic, message) => {
@@ -88,7 +87,6 @@ class MqttService {
             const activationCondition = await ActivationCondition.findOne({ deviceId: device._id });
 
             if (sensorData || waterProcess || activationCondition) {
-                console.log(`Đang gửi toàn bộ dữ liệu lên Adafruit...`);
 
                 const feedMapping = {
                     'tempswitch': waterProcess?.tempControlled,
@@ -104,7 +102,6 @@ class MqttService {
                 for (const [feed, value] of Object.entries(feedMapping)) {
                     if (value !== undefined && value !== null) {
                         await this.publishToDeviceFeed(device._id, feed, value.toString());
-                        console.log(` Đã gửi dữ liệu lên ${feed}: ${value}`);
                     }
                 }
             }
@@ -117,7 +114,7 @@ class MqttService {
         const feeds = [
             'temp', 'humid', 'tempswitch', 'humidswitch', 
             'pump', 'speed', 'tempstart', 'tempstop', 
-            'humidstart', 'humidstop'
+            'humidstart', 'humidstop'   
         ];
 
         feeds.forEach(feed => {
@@ -126,7 +123,6 @@ class MqttService {
                 if (err) {
                     console.error(`Lỗi khi đăng ký ${feed}:`, err);
                 } else {
-                    console.log(`Đã đăng ký nhận dữ liệu từ ${topic}`);
                 }
             });
         });
@@ -147,7 +143,6 @@ class MqttService {
             const topic = `${device.usernameaio}/feeds/${feed}`;
     
             client.publish(topic, value.toString());
-            console.log(`Gửi dữ liệu đến ${topic}: ${value}`);
 
             // Lưu lại dữ liệu vừa gửi để tránh nhận phản hồi từ Adafruit
             this.lastPublished[topic] = value.toString();
@@ -185,7 +180,6 @@ class MqttService {
             const cleanTopic = topic.split('/').pop(); // Lấy phần cuối của topic
             const feedType = feedMap[cleanTopic] || cleanTopic;
     
-            console.log(`Kiểm tra feedType: ${feedType}`);
     
             // Cập nhật SensorData nếu là cảm biến
             if (['temperature', 'humidity'].includes(feedType)) {
@@ -213,7 +207,6 @@ class MqttService {
                         if (existingHistory) {
                             existingHistory.tempvalue =receivedValue;
                             await existingHistory.save();
-                            console.log(`Lịch sử đã được cập nhật:`, existingHistory);
                         } else {
                             await History.create({
                                 deviceId: deviceId,
@@ -222,7 +215,6 @@ class MqttService {
                                 timestamp: new Date()
                             });
                     
-                            console.log(`Dữ liệu lịch sử mới đã được tạo.`);
                         }
                     
                     } else if (feedType === "humidity") {
@@ -239,7 +231,6 @@ class MqttService {
                         if (existingHistory) {
                             existingHistory.humidvalue =receivedValue;
                             await existingHistory.save();
-                            console.log(`Lịch sử đã được cập nhật:`, existingHistory);
                         } else {
                             await History.create({
                                 deviceId: deviceId,
@@ -248,14 +239,12 @@ class MqttService {
                                 timestamp: new Date()
                             });
                     
-                            console.log(`Dữ liệu lịch sử mới đã được tạo.`);
                         }
                     }
                     sensorData.timestamp = new Date();
                 }
             
                 await sensorData.save();
-                console.log(`Dữ liệu SensorData đã được cập nhật:`, sensorData);
             
                 // Cập nhật lại lastPublished sau khi lưu vào DB
                 this.lastPublished[topic] = receivedValue;
@@ -282,7 +271,6 @@ class MqttService {
                 }
     
                 await waterProcess.save();
-                console.log(`Đã cập nhật WaterProcess:`, waterProcess);
     
                 // Cập nhật lại lastPublished sau khi lưu vào DB
                 this.lastPublished[topic] = receivedValue;
@@ -311,7 +299,6 @@ class MqttService {
     
                 activationCondition.updatedAt = new Date();
                 await activationCondition.save();
-                console.log(`Đã cập nhật ActivationCondition:`, activationCondition);
     
          
             }
