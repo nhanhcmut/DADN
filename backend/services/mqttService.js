@@ -77,7 +77,18 @@ class MqttService {
 
         this.clients[device._id] = client;
     }
-
+    
+    disconnect(device) {
+        if (!device || !device._id || !this.clients[device._id]) {
+            console.error('Lỗi: Device không hợp lệ hoặc không có kết nối MQTT để huỷ!');
+            return;
+        }
+    
+        console.log(`Ngắt kết nối MQTT cho thiết bị: ${device.name}`);
+        this.clients[device._id].end(true); 
+        delete this.clients[device._id];
+    }
+    
     async sendDeviceDataToAdafruit(client, device) {
         try {
             const sensorData = await SensorData.findOne({ deviceId: device._id });
@@ -87,9 +98,9 @@ class MqttService {
             if (sensorData || waterProcess || activationCondition) {
 
                 const feedMapping = {
-                    'tempswitch': waterProcess?.tempControlled,
-                    'humidswitch': waterProcess?.humidControlled,
-                    'pump': waterProcess?.manualControl,
+                    'tempswitch': waterProcess?.tempControlled ? 1 : 0,
+                    'humidswitch': waterProcess?.humidControlled ? 1 : 0,
+                    'pump': waterProcess?.manualControl ? 1 : 0,
                     'speed': waterProcess?.pumpSpeed,
                     'tempstart': activationCondition?.conditions.temperature.start,
                     'tempstop': activationCondition?.conditions.temperature.stop,
@@ -251,11 +262,11 @@ class MqttService {
             // Cập nhật WaterProcess nếu là điều khiển bơm
             if (['tempControlled', 'humidControlled', 'manualControl', 'pumpSpeed'].includes(feedType)) {
                 let waterProcess = await WaterProcess.findOne({ deviceId: deviceId });
-    
+            
                 if (!waterProcess) {
                     waterProcess = new WaterProcess({
                         deviceId: deviceId,
-                        [feedType]: feedType === 'pumpSpeed' ? parseInt(receivedValue) : receivedValue === '1',
+                        [feedType]: feedType === 'pumpSpeed' ? parseInt(receivedValue) : (receivedValue === 'true' ? 1 : 0),
                         updatedAt: new Date()
                     });
                 } else {
@@ -266,12 +277,14 @@ class MqttService {
                     }
                     waterProcess.updatedAt = new Date();
                 }
-    
+                
+            
                 await waterProcess.save();
-    
+            
                 // Cập nhật lại lastPublished sau khi lưu vào DB
                 this.lastPublished[topic] = receivedValue;
             }
+            
     
             // Cập nhật ActivationCondition nếu là điều kiện kích hoạt
             if (['tempStart', 'tempStop', 'humidStart', 'humidStop'].includes(feedType)) {

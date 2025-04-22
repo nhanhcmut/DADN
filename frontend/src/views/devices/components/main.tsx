@@ -56,6 +56,11 @@ const DevicesMain = () => {
       if (createDevice.fulfilled.match(data)) {
         addNotification({ type: "success", message: intl("Success") });
         fetchData();
+        setName("");
+        setLocation("");
+        setKeyaio("");
+        setUsernameaio("");
+        
       } else if (createDevice.rejected.match(data)) {
         addNotification({ type: "error", message: intl("Fail") });
       }
