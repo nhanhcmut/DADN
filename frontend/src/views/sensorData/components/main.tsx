@@ -56,7 +56,7 @@ const SensorDataMain = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchSensorData();
-    }, 3000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [id]);
@@ -87,7 +87,7 @@ const SensorDataMain = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchHistoryData();
-    }, 3000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [id]);
@@ -113,7 +113,7 @@ const SensorDataMain = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchWaterProcess();
-    }, 2000); // Gọi mỗi 5 giây
+    }, 3000); // Gọi mỗi 5 giây
 
     return () => clearInterval(interval);
   }, [id]);
@@ -140,7 +140,7 @@ const SensorDataMain = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchActivationCondition();
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [id]);
